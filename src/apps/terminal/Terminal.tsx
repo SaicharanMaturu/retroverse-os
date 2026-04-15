@@ -343,7 +343,7 @@ export default function Terminal() {
 
         <div className="space-y-1.5 opacity-100 text-[15px] font-bold tracking-wide flex-1 overflow-y-auto">
           {lines.map((l, i) => (
-            <div key={i} className="whitespace-pre-wrap leading-relaxed">{l}</div>
+            <div key={i} className="whitespace-pre-wrap leading-relaxed text-[#4ade80] text-glow">{l}</div>
           ))}
 
           <div className="flex mt-2 relative pb-6 text-glow items-center">
