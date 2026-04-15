@@ -102,7 +102,7 @@ export function getPrompt(): string {
 function ls(): string {
   const node = getNode(currentPath);
   if (!node || !Array.isArray(node.children)) return "Empty";
-  if (node.children.length === 0) return "";
+  if (node.children.length === 0) return "(empty directory)";
   return node.children.map((c: any) => `${c.name}${c.type === 'folder' ? '/' : ''}`).join("  ");
 }
 
