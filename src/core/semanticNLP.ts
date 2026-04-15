@@ -111,17 +111,15 @@ export class SemanticNLPEngine {
   async initialize() {
     try {
       if (!this.initialized) {
-        console.log("🧠 Initializing Transformers.js semantic engine...");
+        // Silently attempt to load transformer model
         this.zeroShotClassifier = await pipeline(
           "zero-shot-classification",
           "Xenova/mobilebert-uncased-mnli"
         );
         this.initialized = true;
-        console.log("✅ Semantic engine ready!");
       }
     } catch (err) {
-      console.warn("⚠️ Semantic engine not available (Transformers.js):", err);
-      // Fallback to basic mode
+      // Silently fall back to basic NLP mode - transformer not available
       this.initialized = false;
     }
   }
