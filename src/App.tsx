@@ -11,15 +11,14 @@ import { useOSStore } from "./store/useOSStore";
 
 function App() {
   const [booted, setBooted] = useState(false);
-  const [theme, setTheme] = useState<"retro" | "future">("future");
   const windows = useOSStore((s) => s.windows);
 
   if (!booted) return <BootScreen onFinish={() => setBooted(true)} />;
 
   return (
-    <div className={theme === "retro" ? "retro-theme" : "future-theme"}>
+    <div>
       {/* <ChallengePanel /> */}
-      <DesktopScreen theme={theme} onThemeToggle={() => setTheme(theme === "retro" ? "future" : "retro")} />
+      <DesktopScreen />
 
       {windows.map((w) => {
         if (!w.isOpen) return null;

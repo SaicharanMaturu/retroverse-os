@@ -3,12 +3,7 @@ import { useFSStore } from "../store/useFSStore";
 import { getNode } from "../core/fileSystem/fsUtils";
 import { AIAssistantPanel } from "../components/AIAssistantPanel";
 
-interface DesktopScreenProps {
-  theme: "retro" | "future";
-  onThemeToggle: () => void;
-}
-
-export default function DesktopScreen({ theme, onThemeToggle }: DesktopScreenProps) {
+export default function DesktopScreen() {
   const openWindow = useOSStore((s) => s.openWindow);
   useFSStore((s) => s.version); // Reactivity anchor
 
@@ -17,15 +12,8 @@ export default function DesktopScreen({ theme, onThemeToggle }: DesktopScreenPro
 
   return (
     <div className="w-screen h-screen bg-[#020402] relative overflow-hidden flex flex-col">
-      {/* Theme Toggle & AI Panel in top right */}
+      {/* AI Panel in top right */}
       <div className="absolute top-4 right-4 z-50 flex flex-col gap-3 max-w-xs">
-        <button
-          onClick={onThemeToggle}
-          className="px-4 py-2 bg-[#4ade80]/20 border border-[#4ade80]/60 text-[#4ade80] rounded hover:bg-[#4ade80]/30 transition-all font-mono text-sm"
-        >
-          🎨 {theme === "retro" ? "Future" : "Retro"} Mode
-        </button>
-        
         {/* AI Assistant Stats Panel */}
         <AIAssistantPanel
           currentCommand=""
