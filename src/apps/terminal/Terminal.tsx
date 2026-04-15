@@ -238,13 +238,13 @@ export default function Terminal() {
         } else if (output) {
           const motivationalMsg = contextMemory.getMotivationalMessage();
           if (!isNaturalLanguage) {
-            setLines([...lines, `${getPrompt()} ${input}`, output, ...(motivationalMsg ? [`💬 ${motivationalMsg}`] : [])]);
+            setLines(prev => [...prev, `${getPrompt()} ${input}`, output, ...(motivationalMsg ? [`💬 ${motivationalMsg}`] : [])]);
           } else {
             setLines(prev => [...prev, output, ...(motivationalMsg ? [`💬 ${motivationalMsg}`] : [])]);
           }
         } else {
           if (!isNaturalLanguage) {
-            setLines([...lines, `${getPrompt()} ${input}`]);
+            setLines(prev => [...prev, `${getPrompt()} ${input}`]);
           }
         }
       } catch (err) {
