@@ -18,6 +18,7 @@ export default function Terminal() {
 
     const cmd = input.trim().split(/\s+/)[0];
     const commands = [
+      // Basic
       "ls",
       "cd",
       "mkdir",
@@ -30,6 +31,37 @@ export default function Terminal() {
       "echo",
       "cp",
       "mv",
+      // System Info
+      "date",
+      "whoami",
+      "uname",
+      "uptime",
+      "df",
+      "ps",
+      // File Tools
+      "file",
+      "stat",
+      "ln",
+      "basename",
+      "dirname",
+      // Text Processing
+      "cut",
+      "paste",
+      "tr",
+      "rev",
+      "nl",
+      "col",
+      // History & Config
+      "history",
+      "alias",
+      "env",
+      "export",
+      // Utilities
+      "time",
+      "which",
+      "calc",
+      "bc",
+      // Advanced
       "grep",
       "find",
       "sort",
