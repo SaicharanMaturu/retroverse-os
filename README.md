@@ -1,73 +1,121 @@
-# React + TypeScript + Vite
+# RetroVerse OS - Minimal Cyberpunk Terminal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight, fast terminal simulator built with React + TypeScript. 57+ real commands, zero bloat.
 
-Currently, two official plugins are available:
+![RetroVerse](https://img.shields.io/badge/version-1.0.0-green)
+![Size](https://img.shields.io/badge/size-283KB-blue)
+![Commands](https://img.shields.io/badge/commands-57%2B-brightgreen)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Live Demo
 
-## React Compiler
+**Play online:** https://superb-gumption-8d1fd5.netlify.app
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+- ✅ **57 Real Commands** - `ls`, `cd`, `mkdir`, `grep`, `find`, `man`, and more
+- ⚡ **Lightweight** - Only 283KB total, 89KB gzipped
+- 🎮 **Interactive** - Tab autocomplete, command history, suggestions
+- 🎨 **Themeable** - Dark, neon, and retro modes
+- 📚 **Help System** - `man` command for every function
+- 🎯 **Achievements** - Track your terminal mastery
+- 💡 **Tips** - Learn new commands with random tips
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Quick Commands
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+man ls         - Get help for ls command
+about          - Show project info
+system         - View system dashboard
+theme dark     - Change theme
+tip            - Get a random learning tip
+ls             - List files with 📁📄 icons
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## All 57 Commands
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### New Features (5) ✨
+- `man <cmd>` - Manual for any command
+- `about` - Project information
+- `system` - System dashboard
+- `theme` - Change theme (dark/neon/retro)
+- `tip` - Get random learning tip
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### File Operations (11)
+- `ls`, `cd`, `pwd`, `mkdir`, `touch`, `cat`, `rm`, `cp`, `mv`, `echo`, `clear`
+
+### System Info (6)
+- `date`, `whoami`, `uname`, `uptime`, `df`, `ps`
+
+### File Tools (5)
+- `file`, `stat`, `ln`, `basename`, `dirname`
+
+### Text Processing (6)
+- `cut`, `paste`, `tr`, `rev`, `nl`, `col`
+
+### Advanced (8)
+- `grep`, `find`, `head`, `tail`, `wc`, `sort`, `uniq`, `chmod`
+
+### History & Config (4)
+- `history`, `alias`, `env`, `export`
+
+### Utilities (6)
+- `time`, `which`, `calc`, `bc`, `help`
+
+## Quick Start
+
+```bash
+git clone https://github.com/SaicharanMaturu/retroverse-os.git
+cd retroverse-os
+npm install
+npm run dev        # Local dev
+npm run build      # Production build
 ```
+
+Visit: https://superb-gumption-8d1fd5.netlify.app
+
+## Usage Examples
+
+```
+ls                 # List files
+mkdir projects     # Create folder
+cd projects        # Enter folder
+touch readme.txt   # Create file
+cat readme.txt     # Read file
+man ls             # Get help
+grep hello file    # Search
+calc 10+5*2        # Math
+theme neon         # Change theme
+tip                # Get tip
+```
+
+## Tech Stack
+
+- **React 18** + TypeScript
+- **Tailwind CSS** for styling
+- **Vite** for fast builds
+- **Zustand** for state
+- **Netlify** for hosting
+
+## Stats
+
+| Metric | Value |
+|--------|-------|
+| Commands | 57+ |
+| Bundle | 283KB |
+| Gzipped | 89KB |
+| Build | ~2s |
+
+## Keyboard Shortcuts
+
+- `⬆ Arrow Up` - Previous command
+- `⬇ Arrow Down` - Next command
+- `Tab` - Autocomplete
+- `Enter` - Execute
+
+## License
+
+MIT © 2026 Sai Charan Maturu
+
+---
+
+**🎮 Try it now:** https://superb-gumption-8d1fd5.netlify.app
