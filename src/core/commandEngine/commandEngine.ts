@@ -104,16 +104,86 @@ let environment: Record<string, string> = {
   OS: "RetroOS-v1.0",
   VERSION: "1.0.0",
 };
+let theme: "dark" | "neon" | "retro" = "dark";
+let commandCount = 0;
+let achievements: Record<string, boolean> = {
+  first_command: false,
+  ten_commands: false,
+  file_explorer: false,
+  system_admin: false,
+};
+const tips = [
+  "💡 Use 'man <command>' to learn about any command",
+  "💡 Press Tab to autocomplete command names",
+  "💡 Use arrow up/down to navigate command history",
+  "💡 Try 'alias myls=ls' to create command shortcuts",
+  "💡 Use 'calc' for quick math: calc 100*2",
+  "💡 'env' shows all environment variables",
+  "💡 'history' shows all your previous commands",
+  "💡 'find' can search for files by pattern",
+  "💡 'grep' searches inside file contents",
+  "💡 'mkdir -p' creates nested folders",
+];
+const manDatabase: Record<string, string> = {
+  ls: "LIST - List directory contents\nUsage: ls\nShow all files and folders in current directory",
+  cd: "CHANGE DIRECTORY - Navigate to folder\nUsage: cd <folder>\nExample: cd home\nUse 'cd ..' to go back",
+  mkdir: "MAKE DIRECTORY - Create new folder\nUsage: mkdir <name>\nExample: mkdir projects",
+  touch: "CREATE FILE - Create empty file\nUsage: touch <filename>\nExample: touch notes.txt",
+  cat: "CONCATENATE - Display file contents\nUsage: cat <filename>\nExample: cat readme.txt",
+  rm: "REMOVE - Delete file or folder\nUsage: rm <name>\nWARNING: Permanent deletion",
+  cp: "COPY - Duplicate file or folder\nUsage: cp <source> <destination>\nExample: cp old.txt new.txt",
+  mv: "MOVE/RENAME - Move or rename file\nUsage: mv <source> <destination>\nExample: mv old.txt new.txt",
+  pwd: "PRINT WORKING DIRECTORY - Show current path\nUsage: pwd\nShows full path from root",
+  echo: "ECHO - Print text\nUsage: echo <text>\nExample: echo Hello World",
+  grep: "GLOBAL REGULAR EXPRESSION - Search in files\nUsage: grep <pattern> <file>\nExample: grep 'hello' file.txt",
+  find: "FIND - Search for files\nUsage: find <pattern>\nExample: find *.txt",
+  head: "HEAD - Show first lines\nUsage: head <file> [lines]\nDefault: 5 lines",
+  tail: "TAIL - Show last lines\nUsage: tail <file> [lines]\nDefault: 5 lines",
+  wc: "WORD COUNT - Count lines/words/bytes\nUsage: wc <file>",
+  sort: "SORT - Sort file lines\nUsage: sort <file>",
+  uniq: "UNIQUE - Remove duplicate lines\nUsage: uniq <file>",
+  chmod: "CHANGE MODE - Change permissions\nUsage: chmod <perms> <file>",
+  date: "DATE - Show current date and time\nUsage: date",
+  whoami: "WHO AM I - Show current user\nUsage: whoami",
+  uname: "UNIX NAME - Show OS info\nUsage: uname",
+  uptime: "UPTIME - Show system uptime\nUsage: uptime",
+  df: "DISK FREE - Show disk usage\nUsage: df",
+  ps: "PROCESS - Show running processes\nUsage: ps",
+  file: "FILE - Detect file type\nUsage: file <filename>",
+  stat: "STAT - Show file statistics\nUsage: stat <filename>",
+  ln: "LINK - Create symbolic link\nUsage: ln <source> <target>",
+  basename: "BASENAME - Get filename only\nUsage: basename <path>",
+  dirname: "DIRNAME - Get directory path\nUsage: dirname <path>",
+  cut: "CUT - Extract columns\nUsage: cut -f <fields> <file>",
+  paste: "PASTE - Combine lines\nUsage: paste <file1> <file2>",
+  tr: "TRANSLATE - Change characters\nUsage: tr <source> <dest>",
+  rev: "REVERSE - Reverse line contents\nUsage: rev <file>",
+  nl: "NUMBER LINES - Add line numbers\nUsage: nl <file>",
+  col: "COLUMNS - Format columns\nUsage: col <file>",
+  history: "HISTORY - Show command history\nUsage: history\nShows all commands you've run",
+  alias: "ALIAS - Create command shortcut\nUsage: alias <name> <command>\nExample: alias ll='ls -la'",
+  env: "ENVIRONMENT - Show env variables\nUsage: env\nShows all system environment variables",
+  export: "EXPORT - Set environment variable\nUsage: export VAR=value",
+  time: "TIME - Measure execution time\nUsage: time <command>",
+  which: "WHICH - Find command location\nUsage: which <command>",
+  calc: "CALCULATOR - Perform math\nUsage: calc <expression>\nExample: calc 2+2*3",
+  bc: "CALCULATOR - Alternative math\nUsage: bc <expression>",
+  help: "HELP - Show available commands\nUsage: help",
+  clear: "CLEAR - Clear terminal screen\nUsage: clear",
+  about: "ABOUT - Show project info\nUsage: about",
+  man: "MANUAL - Show command help\nUsage: man <command>\nExample: man ls",
+  system: "SYSTEM - Show system stats\nUsage: system",
+  theme: "THEME - Change terminal theme\nUsage: theme <dark|neon|retro>",
+  tip: "TIP - Show random tip\nUsage: tip",
+};
 
 export function getPrompt(): string {
   return "/" + currentPath.join("/") + " >";
 }
 
 function ls(): string {
-  const node = getNode(currentPath);
-  if (!node || !Array.isArray(node.children)) return "Empty";
-  if (node.children.length === 0) return "(empty directory)";
-  return node.children.map((c: any) => `${c.name}${c.type === 'folder' ? '/' : ''}`).join("  ");
+  recordAchievement();
+  return lsColored();
 }
 
 function cd(folder: string): string {
@@ -403,6 +473,83 @@ function calc(expr: string): string {
   }
 }
 
+// ===== NEW FEATURES =====
+function man(cmd: string): string {
+  if (!cmd) return "Usage: man <command>\nExample: man ls\n\nAvailable commands: " + Object.keys(manDatabase).join(", ");
+  const help = manDatabase[cmd];
+  if (!help) return `No manual entry for '${cmd}'`;
+  return help;
+}
+
+function about(): string {
+  return `
+╔════════════════════════════════════════╗
+║      RetroVerse OS v1.0                ║
+║   A Minimal Cyberpunk Terminal         ║
+║                                        ║
+║  • 52+ Real Commands                   ║
+║  • 276KB Bundle Size                   ║
+║  • Built with React + TypeScript       ║
+║  • Deployed with Netlify               ║
+║                                        ║
+║  GitHub: SaicharanMaturu/retroverse-os ║
+║  Live: superb-gumption-8d1fd5.netlify  ║
+╚════════════════════════════════════════╝
+`;
+}
+
+function systemCmd(): string {
+  const days = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % 365;
+  const hours = Math.floor(Date.now() / (1000 * 60 * 60)) % 24;
+  const used = 234 + Math.random() * 100;
+  const total = 1000;
+  return `
+╔═══ SYSTEM STATS ═══╗
+hostname: retroverse
+kernel: RetroOS 4.4.0
+uptime: ${days}d ${hours}h
+memory: ${used.toFixed(0)}MB / ${total}MB (${((used/total)*100).toFixed(1)}%)
+cpu: 42% load avg
+commands: 52+ available
+theme: ${theme}
+commands run: ${commandCount}
+╚═══════════════════╝
+`;
+}
+
+function theme_cmd(newTheme: string): string {
+  const themes = ["dark", "neon", "retro"];
+  if (!newTheme) return `Current theme: ${theme}\nAvailable: ${themes.join(", ")}`;
+  if (!themes.includes(newTheme)) return `Unknown theme. Use: ${themes.join(", ")}`;
+  theme = newTheme as any;
+  return `Theme changed to: ${newTheme} ✓`;
+}
+
+function tip(): string {
+  const randomTip = tips[Math.floor(Math.random() * tips.length)];
+  return randomTip;
+}
+
+function recordAchievement(): void {
+  commandCount++;
+  if (commandCount === 1) achievements.first_command = true;
+  if (commandCount === 10) achievements.ten_commands = true;
+}
+
+function lsColored(): string {
+  const node = getNode(currentPath);
+  if (!node || !Array.isArray(node.children)) return "Empty";
+  if (node.children.length === 0) return "(empty directory)";
+  
+  return node.children.map((c: any) => {
+    if (c.type === "folder") {
+      return `📁 ${c.name}/`;
+    } else {
+      return `📄 ${c.name}`;
+    }
+  }).join("  ");
+}
+
 // Rule-based smart AI command runner with LLM support
 export async function runCommand(input: string): Promise<string> {
   if (!input.trim()) return "";
@@ -484,6 +631,13 @@ export async function runCommand(input: string): Promise<string> {
     case "clear": return "";
     case "help": return Object.keys(helpDB).join(", ");
     
+    // ✨ NEW COMMANDS
+    case "man": return man(args[0]);
+    case "about": return about();
+    case "system": return systemCmd();
+    case "theme": return theme_cmd(args[0]);
+    case "tip": return tip();
+    
     // System Info
     case "date": return date();
     case "whoami": return whoami();
@@ -521,10 +675,12 @@ export async function runCommand(input: string): Promise<string> {
     
     // Advanced Commands
     case "grep": {
+      recordAchievement();
       const result = AdvancedCommands.grep(args[0], args[1], currentPath);
       return result.output;
     }
     case "find": {
+      recordAchievement();
       const result = AdvancedCommands.find(args.join(" "), currentPath);
       return result.output;
     }
@@ -556,6 +712,7 @@ export async function runCommand(input: string): Promise<string> {
     }
     
     default:
+      recordAchievement();
       const sug = suggest(command);
       if (sug) return `Command not found. Did you mean: ${sug}?`;
       return "Command not found";

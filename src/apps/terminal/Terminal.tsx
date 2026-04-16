@@ -61,6 +61,12 @@ export default function Terminal() {
       "which",
       "calc",
       "bc",
+      // ✨ NEW
+      "man",
+      "about",
+      "system",
+      "theme",
+      "tip",
       // Advanced
       "grep",
       "find",
