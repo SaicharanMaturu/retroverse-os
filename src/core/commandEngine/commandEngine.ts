@@ -94,6 +94,16 @@ function levenshtein(a: string, b: string): number {
 }
 
 let currentPath: string[] = ["home"];
+let commandHistory: string[] = [];
+let aliases: Record<string, string> = {};
+let environment: Record<string, string> = {
+  USER: "retroverse",
+  HOME: "/home",
+  PATH: "/bin:/usr/bin:/usr/local/bin",
+  SHELL: "/bin/bash",
+  OS: "RetroOS-v1.0",
+  VERSION: "1.0.0",
+};
 
 export function getPrompt(): string {
   return "/" + currentPath.join("/") + " >";
@@ -202,9 +212,203 @@ function cat(name: string): string {
   return found.content || "";
 }
 
+// ===== SYSTEM INFO COMMANDS =====
+function date(): string {
+  return new Date().toLocaleString();
+}
+
+function whoami(): string {
+  return environment.USER;
+}
+
+function uname(): string {
+  return `${environment.OS} (RetroOS kernel 4.4.0)`;
+}
+
+function uptime(): string {
+  const ms = Date.now();
+  const hours = Math.floor(ms / (1000 * 60 * 60)) % 24;
+  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+  return `System up ${days} days, ${hours} hours`;
+}
+
+function df(): string {
+  const total = 1000; // MB
+  const used = 234 + Math.random() * 100;
+  const available = total - used;
+  return `Filesystem  Size  Used  Avail  Use%\nroot        ${total}M  ${used.toFixed(0)}M  ${available.toFixed(0)}M  ${((used/total)*100).toFixed(0)}%`;
+}
+
+function ps(): string {
+  return `PID  NAME         STATE      MEM\n1    init         running    2.1%\n42   terminal     running    5.3%\n99   kernel       running    1.8%\n234  shell        running    3.2%`;
+}
+
+// ===== FILE TOOLS =====
+function file(name: string): string {
+  if (!name) return "Usage: file <filename>";
+  const node = getNode(currentPath);
+  if (!node || !node.children) return "Cannot read";
+  const item = node.children.find((c: any) => c.name === name);
+  if (!item) return `${name}: cannot open`;
+  if (item.type === "folder") return `${name}: directory`;
+  const content = item.content || "";
+  if (content.match(/^[\x00-\x08\x0B-\x0C\x0E-\x1F]/)) return `${name}: binary data`;
+  if (content.match(/^\{[\s\S]*\}$/) || content.match(/^\[[\s\S]*\]$/)) return `${name}: JSON text`;
+  return `${name}: ASCII text`;
+}
+
+function stat(name: string): string {
+  if (!name) return "Usage: stat <filename>";
+  const node = getNode(currentPath);
+  if (!node || !node.children) return "Cannot stat";
+  const item = node.children.find((c: any) => c.name === name);
+  if (!item) return `stat: cannot stat '${name}'`;
+  const size = item.type === "file" ? (item.content || "").length : 4096;
+  const now = new Date().toISOString();
+  return `File: ${name}\nSize: ${size}B  Blocks: ${Math.ceil(size/512)}  Type: ${item.type === "folder" ? "directory" : "regular file"}\nAccess: (0644)  Uid: (1000)  Gid: (1000)\nModify: ${now}`;
+}
+
+function ln(src: string, dest: string): string {
+  if (!src || !dest) return "Usage: ln <source> <target>";
+  return `Created link ${dest} -> ${src}`;
+}
+
+function basename(path: string): string {
+  if (!path) return "Usage: basename <path>";
+  return path.split("/").pop() || path;
+}
+
+function dirname(path: string): string {
+  if (!path) return "Usage: dirname <path>";
+  const parts = path.split("/");
+  if (parts.length <= 1) return ".";
+  parts.pop();
+  return parts.join("/") || "/";
+}
+
+// ===== TEXT PROCESSING =====
+function cut(args: string[]): string {
+  if (args.length === 0) return "Usage: cut -f <fields> <file>";
+  // Simplified: cut -f 1,2 filename
+  const fileIdx = args.findIndex(a => !a.startsWith("-"));
+  if (fileIdx === -1) return "No file specified";
+  const fileName = args[fileIdx];
+  const node = getNode(currentPath);
+  if (!node || !node.children) return "Cannot read";
+  const file = node.children.find((c: any) => c.name === fileName && c.type === "file");
+  if (!file) return `${fileName}: cannot open`;
+  const lines = (file.content || "").split("\n");
+  return lines.map(l => l.split("\t")[0]).join("\n");
+}
+
+function paste(args: string[]): string {
+  if (args.length === 0) return "Usage: paste <file1> <file2> ...";
+  const node = getNode(currentPath);
+  if (!node || !node.children) return "Cannot read";
+  const files = args.map(name => {
+    const f = node.children!.find((c: any) => c.name === name && c.type === "file");
+    return f ? (f.content || "").split("\n") : [];
+  });
+  const maxLen = Math.max(...files.map(f => f.length));
+  const result = [];
+  for (let i = 0; i < maxLen; i++) {
+    result.push(files.map((f) => f[i] || "").join("\t"));
+  }
+  return result.join("\n");
+}
+
+function tr(args: string[]): string {
+  if (args.length < 2) return "Usage: tr <source> <dest>";
+  // Simple translation: tr 'a' 'b' (reads from stdin, we'll just show usage)
+  return `tr: translating '${args[0]}' to '${args[1]}'`;
+}
+
+function rev(name: string): string {
+  if (!name) return "Usage: rev <file>";
+  const node = getNode(currentPath);
+  if (!node || !node.children) return "Cannot read";
+  const file = node.children.find((c: any) => c.name === name && c.type === "file");
+  if (!file) return `${name}: cannot open`;
+  return (file.content || "").split("\n").map(l => l.split("").reverse().join("")).join("\n");
+}
+
+function nl(name: string): string {
+  if (!name) return "Usage: nl <file>";
+  const node = getNode(currentPath);
+  if (!node || !node.children) return "Cannot read";
+  const file = node.children.find((c: any) => c.name === name && c.type === "file");
+  if (!file) return `${name}: cannot open`;
+  const lines = (file.content || "").split("\n");
+  return lines.map((l, i) => `${(i + 1).toString().padStart(6)}  ${l}`).join("\n");
+}
+
+function col(name: string): string {
+  if (!name) return "Usage: col <file>";
+  // Simplified column formatter
+  const node = getNode(currentPath);
+  if (!node || !node.children) return "Cannot read";
+  const file = node.children.find((c: any) => c.name === name && c.type === "file");
+  if (!file) return `${name}: cannot open`;
+  return (file.content || "").split("\n").map(l => l.split("\t").join("  ")).join("\n");
+}
+
+// ===== HISTORY & CONFIG =====
+function historyCmd(): string {
+  if (commandHistory.length === 0) return "No command history";
+  return commandHistory.map((c, i) => `${i + 1}  ${c}`).join("\n");
+}
+
+function alias(arg1: string, arg2: string): string {
+  if (!arg1) return Object.entries(aliases).map(([k, v]) => `alias ${k}='${v}'`).join("\n") || "No aliases defined";
+  if (!arg2) return `alias: ${arg1}: not found`;
+  aliases[arg1] = arg2;
+  return "";
+}
+
+function env(): string {
+  return Object.entries(environment).map(([k, v]) => `${k}=${v}`).join("\n");
+}
+
+function exportCmd(arg: string): string {
+  if (!arg) return "Usage: export VAR=value";
+  const [key, value] = arg.split("=");
+  if (!value) return `export: ${key}: not set`;
+  environment[key] = value;
+  return "";
+}
+
+// ===== UTILITY =====
+function time_cmd(cmd: string): string {
+  if (!cmd) return "Usage: time <command>";
+  const ms = Math.random() * 100 + 10;
+  return `${cmd}  ${(ms / 1000).toFixed(3)}s user  ${(ms / 1000).toFixed(3)}s system`;
+}
+
+function which(cmd: string): string {
+  if (!cmd) return "Usage: which <command>";
+  const commands = ["ls", "cd", "mkdir", "cat", "echo"];
+  if (commands.includes(cmd)) return `/bin/${cmd}`;
+  return `which: ${cmd}: not found`;
+}
+
+function calc(expr: string): string {
+  if (!expr) return "Usage: calc <expression> (e.g., calc 2+2*3)";
+  try {
+    // Safe eval - only allow numeric operations
+    if (!/^[\d\s+\-*/.()]*$/.test(expr)) return "Error: invalid characters";
+    const result = Function('"use strict"; return (' + expr + ')')();
+    return result.toString();
+  } catch (e) {
+    return `Error: ${expr}`;
+  }
+}
+
 // Rule-based smart AI command runner with LLM support
 export async function runCommand(input: string): Promise<string> {
   if (!input.trim()) return "";
+  
+  // Record command to history
+  commandHistory.push(input);
 
   // 1. SMART LANGUAGE
   const mapped = smartMap(input);
@@ -279,6 +483,41 @@ export async function runCommand(input: string): Promise<string> {
     case "echo": return args.join(" ");
     case "clear": return "";
     case "help": return Object.keys(helpDB).join(", ");
+    
+    // System Info
+    case "date": return date();
+    case "whoami": return whoami();
+    case "uname": return uname();
+    case "uptime": return uptime();
+    case "df": return df();
+    case "ps": return ps();
+    
+    // File Tools
+    case "file": return file(args[0]);
+    case "stat": return stat(args[0]);
+    case "ln": return ln(args[0], args[1]);
+    case "basename": return basename(args[0]);
+    case "dirname": return dirname(args[0]);
+    
+    // Text Processing
+    case "cut": return cut(args);
+    case "paste": return paste(args);
+    case "tr": return tr(args);
+    case "rev": return rev(args[0]);
+    case "nl": return nl(args[0]);
+    case "col": return col(args[0]);
+    
+    // History & Config
+    case "history": return historyCmd();
+    case "alias": return alias(args[0], args.slice(1).join(" "));
+    case "env": return env();
+    case "export": return exportCmd(args.join("="));
+    
+    // Utility
+    case "time": return time_cmd(args.join(" "));
+    case "which": return which(args[0]);
+    case "calc":
+    case "bc": return calc(args.join(""));
     
     // Advanced Commands
     case "grep": {
