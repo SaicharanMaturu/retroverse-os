@@ -1,7 +1,6 @@
 import { useOSStore } from "../store/useOSStore";
 import { useFSStore } from "../store/useFSStore";
 import { getNode } from "../core/fileSystem/fsUtils";
-import { AIAssistantPanel } from "../components/AIAssistantPanel";
 
 export default function DesktopScreen() {
   const openWindow = useOSStore((s) => s.openWindow);
@@ -12,15 +11,6 @@ export default function DesktopScreen() {
 
   return (
     <div className="w-screen h-screen bg-[#020402] relative overflow-hidden flex flex-col">
-      {/* AI Panel in top right */}
-      <div className="absolute top-4 right-4 z-50 flex flex-col gap-3 max-w-xs">
-        {/* AI Assistant Stats Panel */}
-        <AIAssistantPanel
-          currentCommand=""
-          failedAttempts={0}
-          isVisible={true}
-        />
-      </div>
 
       {/* Main Content Area */}
       <div className="flex-1 flex items-center justify-center">
