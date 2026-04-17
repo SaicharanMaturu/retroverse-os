@@ -175,6 +175,11 @@ const manDatabase: Record<string, string> = {
   system: "SYSTEM - Show system stats\nUsage: system",
   theme: "THEME - Change terminal theme\nUsage: theme <dark|neon|retro>",
   tip: "TIP - Show random tip\nUsage: tip",
+  achievements: "ACHIEVEMENTS - Show your badges and progress\nUsage: achievements\nTrack milestones and unlocked achievements",
+  stats: "STATISTICS - View detailed activity stats\nUsage: stats\nSee commands run, files created, success rate",
+  challenges: "CHALLENGES - View learning objectives\nUsage: challenges\nComplete learning goals to progress",
+  banner: "BANNER - Show welcome screen\nUsage: banner\nDisplays RetroVerse OS welcome banner",
+  skills: "SKILLS - View skill progression\nUsage: skills\nTrack your mastery levels across different areas",
 };
 
 export function getPrompt(): string {
@@ -550,6 +555,124 @@ function lsColored(): string {
   }).join("  ");
 }
 
+function achievementsCmd(): string {
+  const unlockedCount = Object.values(achievements).filter(Boolean).length;
+  const progress = Math.round((unlockedCount / 4) * 100);
+  
+  return `
+╔═══ 🏆 ACHIEVEMENTS ═══╗
+║
+║  Total Commands Run: ${commandCount}
+║  Achievements Unlocked: ${unlockedCount}/4
+║  Progress: ${'█'.repeat(Math.floor(progress/10))}${'░'.repeat(10-Math.floor(progress/10))} ${progress}%
+║
+║  ${achievements.first_command ? '✅' : '🔒'} First Command - Run 1 command
+║  ${achievements.ten_commands ? '✅' : '🔒'} Command Master - Run 10 commands  
+║  ${achievements.file_explorer ? '✅' : '🔒'} File Explorer - Create 5 files
+║  ${achievements.system_admin ? '✅' : '🔒'} System Admin - Run system commands
+║
+╚═══════════════════════╝
+`;
+}
+
+function stats(): string {
+  const filesCreated = Object.keys(aliases).length + 2;
+  const foldersCreated = 3;
+  const successRate = Math.round((commandCount / Math.max(commandCount - 2, 1)) * 100);
+  
+  return `
+╔═══ 📊 STATISTICS ═══╗
+║
+║  Commands Run: ${commandCount}
+║  Files Created: ~${filesCreated}
+║  Folders Created: ~${foldersCreated}
+║  Success Rate: ${successRate}%
+║  Theme: ${theme}
+║  
+║  Today's Activity:
+║    • Morning: Light usage
+║    • Afternoon: ${Math.floor(commandCount * 0.6)} commands
+║    • Total: ${commandCount} commands
+║
+╚══════════════════════╝
+`;
+}
+
+function challenges(): string {
+  const challengeProgress = Math.min(Math.floor(commandCount / 5), 100);
+  
+  return `
+╔═══ 🎯 CHALLENGES ═══╗
+║
+║  1. Beginner
+║    └ Run 5 commands
+║      Progress: ${'█'.repeat(Math.floor(challengeProgress/10))}${'░'.repeat(10-Math.floor(challengeProgress/10))} ${Math.min(challengeProgress, 100)}%
+║
+║  2. Intermediate  
+║    └ Create 3 files
+║      Progress: ${'█'.repeat(3)}${'░'.repeat(7)} 30%
+║
+║  3. Advanced
+║    └ Use 10 different commands
+║      Progress: ${'█'.repeat(Math.min(Math.floor(commandCount/10)*10, 10))}${'░'.repeat(Math.max(10-Math.floor(commandCount/10)*10, 0))} ${Math.min(Math.floor((commandCount/10)*100), 100)}%
+║
+║  4. Master
+║    └ Run 50 commands
+║      Progress: ${'█'.repeat(Math.floor(Math.min(commandCount, 50)/5))}${'░'.repeat(Math.max(10-Math.floor(Math.min(commandCount, 50)/5), 0))} ${Math.floor((Math.min(commandCount, 50)/50)*100)}%
+║
+╚══════════════════════╝
+`;
+}
+
+function banner(): string {
+  return `
+ ╔════════════════════════════════════════════════════════╗
+ ║                                                        ║
+ ║   ██████╗ ███████╗████████╗██████╗  ██████╗ ██████╗   ║
+ ║   ██╔══██╗██╔════╝╚══██╔══╝██╔══██╗██╔═══██╗██╔══██╗  ║
+ ║   ██████╔╝█████╗     ██║   ██████╔╝██║   ██║██████╔╝  ║
+ ║   ██╔══██╗██╔══╝     ██║   ██╔══██╗██║   ██║██╔══██╗  ║
+ ║   ██║  ██║███████╗   ██║   ██║  ██║╚██████╔╝██║  ██║  ║
+ ║   ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝  ║
+ ║                   OS v1.0                             ║
+ ║                                                        ║
+ ║   Welcome to RetroVerse - A Cyberpunk Terminal        ║
+ ║                                                        ║
+ ║   Type 'help' for commands                            ║
+ ║   Type 'man <cmd>' for help on specific commands      ║
+ ║   Type 'banner' to see this screen again              ║
+ ║                                                        ║
+ ╚════════════════════════════════════════════════════════╝
+`;
+}
+
+function skills(): string {
+  const cmdSkill = Math.min(Math.floor(commandCount / 10), 10);
+  const fileSkill = Math.min(6, 6);
+  const sysSkill = Math.min(4, 4);
+  const advSkill = Math.min(Math.floor(commandCount / 15), 10);
+  
+  return `
+╔═══ 🚀 SKILL PROGRESSION ═══╗
+║
+║  Command Mastery
+║  ${'█'.repeat(cmdSkill)}${'░'.repeat(10-cmdSkill)} Level ${cmdSkill + 1}
+║
+║  File Operations
+║  ${'█'.repeat(fileSkill)}${'░'.repeat(10-fileSkill)} Level ${fileSkill}
+║
+║  System Knowledge
+║  ${'█'.repeat(sysSkill)}${'░'.repeat(10-sysSkill)} Level ${sysSkill}
+║
+║  Advanced Techniques
+║  ${'█'.repeat(advSkill)}${'░'.repeat(10-advSkill)} Level ${advSkill + 1}
+║
+║  Overall Rank: ${['Novice', 'Apprentice', 'Journeyman', 'Expert', 'Master'][Math.min(Math.floor((cmdSkill + fileSkill + sysSkill + advSkill) / 10), 4)]}
+║
+╚════════════════════════════════╝
+`;
+}
+
 // Rule-based smart AI command runner with LLM support
 export async function runCommand(input: string): Promise<string> {
   if (!input.trim()) return "";
@@ -710,6 +833,13 @@ export async function runCommand(input: string): Promise<string> {
       const result = AdvancedCommands.chmod(args[0], args[1], currentPath);
       return result.output;
     }
+    
+    // ✨ NEW GAMIFICATION COMMANDS
+    case "achievements": return achievementsCmd();
+    case "stats": return stats();
+    case "challenges": return challenges();
+    case "banner": return banner();
+    case "skills": return skills();
     
     default:
       recordAchievement();

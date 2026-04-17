@@ -61,12 +61,18 @@ export default function Terminal() {
       "which",
       "calc",
       "bc",
-      // ✨ NEW
+      // ✨ FEATURES
       "man",
       "about",
       "system",
       "theme",
       "tip",
+      // 🎮 GAMIFICATION
+      "achievements",
+      "stats",
+      "challenges",
+      "banner",
+      "skills",
       // Advanced
       "grep",
       "find",
