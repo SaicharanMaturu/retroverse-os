@@ -1,10 +1,10 @@
 # RetroVerse OS - Minimal Cyberpunk Terminal
 
-A lightweight, fast terminal simulator built with React + TypeScript. 57+ real commands, zero bloat.
+A lightweight, fast terminal simulator built with React + TypeScript. 62 real commands, zero bloat.
 
 ![RetroVerse](https://img.shields.io/badge/version-1.0.0-green)
-![Size](https://img.shields.io/badge/size-283KB-blue)
-![Commands](https://img.shields.io/badge/commands-57%2B-brightgreen)
+![Size](https://img.shields.io/badge/size-288KB-blue)
+![Commands](https://img.shields.io/badge/commands-62-brightgreen)
 
 ## 🚀 Live Demo
 
@@ -12,28 +12,36 @@ A lightweight, fast terminal simulator built with React + TypeScript. 57+ real c
 
 ## Features
 
-- ✅ **57 Real Commands** - `ls`, `cd`, `mkdir`, `grep`, `find`, `man`, and more
-- ⚡ **Lightweight** - Only 283KB total, 89KB gzipped
+- ✅ **62 Real Commands** - `ls`, `cd`, `mkdir`, `grep`, `find`, `man`, `achievements`, and more
+- ⚡ **Lightweight** - Only 288KB total, 90KB gzipped
 - 🎮 **Interactive** - Tab autocomplete, command history, suggestions
+- 🏆 **Gamified** - Achievements, stats, challenges, skills tracking
 - 🎨 **Themeable** - Dark, neon, and retro modes
 - 📚 **Help System** - `man` command for every function
-- 🎯 **Achievements** - Track your terminal mastery
 - 💡 **Tips** - Learn new commands with random tips
 
 ## Quick Commands
 
 ```
-man ls         - Get help for ls command
-about          - Show project info
-system         - View system dashboard
-theme dark     - Change theme
-tip            - Get a random learning tip
-ls             - List files with 📁📄 icons
+man ls           - Get help for ls command
+about            - Show project info
+achievements     - View your badges 🏆
+stats            - See activity stats 📊
+challenges       - View learning goals 🎯
+skills           - Track skill progress 🚀
+banner           - Show welcome screen
 ```
 
-## All 57 Commands
+## All 62 Commands
 
-### New Features (5) ✨
+### Gamification (5) 🎮
+- `achievements` - View unlocked badges and progress
+- `stats` - Detailed activity statistics
+- `challenges` - Learning objectives with progress
+- `banner` - Welcome ASCII art
+- `skills` - Skill progression tracking
+
+### Features (5) ✨
 - `man <cmd>` - Manual for any command
 - `about` - Project information
 - `system` - System dashboard
@@ -76,16 +84,22 @@ Visit: https://superb-gumption-8d1fd5.netlify.app
 ## Usage Examples
 
 ```
-ls                 # List files
-mkdir projects     # Create folder
-cd projects        # Enter folder
-touch readme.txt   # Create file
-cat readme.txt     # Read file
-man ls             # Get help
-grep hello file    # Search
-calc 10+5*2        # Math
-theme neon         # Change theme
-tip                # Get tip
+ls                    # List files with emoji
+mkdir projects        # Create folder
+cd projects           # Enter folder
+touch readme.txt      # Create file
+cat readme.txt        # Read file
+man ls                # Get help
+achievements          # View badges 🏆
+stats                 # Show statistics
+challenges            # View goals
+skills                # Track progress
+challenge             # View learning objectives
+banner                # Show welcome
+theme neon            # Change theme
+tip                   # Get learning tip
+grep hello file       # Search
+calc 10+5*2           # Math
 ```
 
 ## Tech Stack
@@ -100,10 +114,11 @@ tip                # Get tip
 
 | Metric | Value |
 |--------|-------|
-| Commands | 57+ |
-| Bundle | 283KB |
-| Gzipped | 89KB |
-| Build | ~2s |
+| Commands | 62 |
+| Bundle | 288KB |
+| Gzipped | 90KB |
+| Build | ~1.5s |
+| Achievements | 4 |
 
 ## Keyboard Shortcuts
 
